@@ -1,0 +1,11 @@
+discord_webhook_url: ""
+database_path: "data/gacha_alert.sqlite3"
+request_timeout_seconds: 20
+subscriptions:
+  - character: "짱구"
+    keywords:
+      - "クレヨンしんちゃん"
+      - "しんちゃん"
+    sources:
+      - "gashapon"
+      - "ichiban_kuji"
