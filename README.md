@@ -11,6 +11,7 @@
   - Ichiban Kuji: `https://1kuji.com/search?word=...`
 - SQLite로 이미 알림 보낸 상품 dedupe
 - Discord webhook으로 신규 상품 embed 알림
+  - Gashapon은 상세 페이지에서 발매시기/가격/종류수/대상연령/설명/라인업명을 보강
 - cron/GitHub Actions/서버에서 주기 실행 가능한 CLI
 
 ## 빠른 시작

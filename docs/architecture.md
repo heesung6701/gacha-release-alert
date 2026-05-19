@@ -28,7 +28,14 @@ config.yaml runtime settings
   - title: `.c-card__name`
   - price: `.c-card__price--main`
   - image: `.c-card__thumb img[src]`
-- release date는 검색 카드에 명확히 없을 수 있으므로 MVP에서는 `unknown` 처리. 필요하면 detail page 추가 fetch.
+- 상세 페이지도 추가로 fetch해서 보강:
+  - title: `.pg-heading`
+  - description: `.pg-detail__description`
+  - release date: `dt=発売時期` / `dd.pg-detailDefinition__detail`
+  - price: `dt=価格(税込)`
+  - kind count: `dt=種類数`
+  - target age: `dt=対象年齢`
+  - lineup names/images: `.pg-detail__picture img[title][src]`
 
 ### Ichiban Kuji
 
@@ -53,7 +60,8 @@ config.yaml runtime settings
 
 - title: 상품명
 - URL: 공식 상세 페이지
-- description: source, character, release/status, price
+- description: 공식 설명 또는 기본 신규 알림 문구
+- fields: source, character, keyword, release/status, price, lineup
 - image: 공식 썸네일
 
 ## Deployment options

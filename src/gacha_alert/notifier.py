@@ -34,11 +34,13 @@ class DiscordNotifier:
             fields.append({"name": "상태", "value": item.status_text, "inline": True})
         if item.price:
             fields.append({"name": "가격", "value": item.price, "inline": True})
+        if item.lineup_names:
+            fields.append({"name": "라인업", "value": ", ".join(item.lineup_names), "inline": False})
 
         embed: dict = {
             "title": item.title,
             "url": item.url,
-            "description": "새 공식 발매 정보가 감지됐어요.",
+            "description": item.description or "새 공식 발매 정보가 감지됐어요.",
             "fields": fields,
             "footer": {"text": "Gacha Release Alert"},
         }

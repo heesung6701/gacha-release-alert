@@ -6,7 +6,7 @@ from urllib.parse import parse_qs, quote, urljoin, urlparse
 import httpx
 from bs4 import BeautifulSoup
 
-from .models import ReleaseItem
+from .models import GashaponDetail, ReleaseItem
 
 USER_AGENT = "Mozilla/5.0 (compatible; gacha-release-alert/0.1; +https://github.com/)"
 
@@ -37,6 +37,16 @@ class GashaponScraper(SourceScraper):
 
     def search_url(self, keyword: str) -> str:
         return f"https://gashapon.jp/products/result.php?free={quote(keyword)}"
+
+    def fetch(self, character: str, keyword: str) -> list[ReleaseItem]:
+        with httpx.Client(timeout=self.timeout_seconds, headers={"User-Agent": USER_AGENT}) as client:
+            html = client.get(self.search_url(keyword), follow_redirects=True).raise_for_status().text
+            items = self.parse(html, character=character, keyword=keyword)
+            enriched_items: list[ReleaseItem] = []
+            for item in items:
+                detail_html = client.get(item.url, follow_redirects=True).raise_for_status().text
+                enriched_items.append(self.enrich_item(item, self.parse_detail(detail_html)))
+        return enriched_items
 
     def parse(self, html: str, character: str, keyword: str) -> list[ReleaseItem]:
         soup = BeautifulSoup(html, "html.parser")
@@ -73,6 +83,64 @@ class GashaponScraper(SourceScraper):
                 )
             )
         return items
+
+    def parse_detail(self, html: str) -> GashaponDetail:
+        soup = BeautifulSoup(html, "html.parser")
+        title_node = soup.select_one(".pg-heading")
+        description_node = soup.select_one(".pg-detail__description")
+        definitions = self._parse_detail_definitions(soup)
+
+        image_urls: list[str] = []
+        lineup_names: list[str] = []
+        for image in soup.select('.pg-detail__picture img[src]'):
+            image_url = image.get("src", "").strip()
+            if image_url and image_url not in image_urls:
+                image_urls.append(image_url)
+            lineup_name = image.get("title", "").strip() or image.get("alt", "").strip()
+            if lineup_name and lineup_name not in lineup_names:
+                lineup_names.append(lineup_name)
+
+        return GashaponDetail(
+            title=title_node.get_text(" ", strip=True) if title_node else None,
+            description=description_node.get_text(" ", strip=True) if description_node else None,
+            release_text=definitions.get("発売時期"),
+            price=definitions.get("価格(税込)") or definitions.get("価格"),
+            kind_count=definitions.get("種類数"),
+            target_age=definitions.get("対象年齢"),
+            lineup_names=lineup_names,
+            image_urls=image_urls,
+        )
+
+    def enrich_item(self, item: ReleaseItem, detail: GashaponDetail) -> ReleaseItem:
+        status_parts = [part for part in [detail.kind_count, detail.target_age] if part]
+        return ReleaseItem(
+            source=item.source,
+            item_id=item.item_id,
+            title=detail.title or item.title,
+            url=item.url,
+            character=item.character,
+            keyword=item.keyword,
+            image_url=detail.image_urls[0] if detail.image_urls else item.image_url,
+            price=detail.price or item.price,
+            release_text=detail.release_text or item.release_text,
+            status_text=" / ".join(status_parts) or item.status_text,
+            description=detail.description or item.description,
+            lineup_names=detail.lineup_names or item.lineup_names,
+        )
+
+    @staticmethod
+    def _parse_detail_definitions(soup: BeautifulSoup) -> dict[str, str]:
+        definitions: dict[str, str] = {}
+        for block in soup.select(".pg-detailDefinition"):
+            title = block.select_one(".pg-detailDefinition__title")
+            detail = block.select_one(".pg-detailDefinition__detail")
+            if title is None or detail is None:
+                continue
+            title_text = " ".join(title.get_text(" ", strip=True).split())
+            detail_text = " ".join(detail.get_text(" ", strip=True).split())
+            if title_text and detail_text:
+                definitions[title_text] = detail_text
+        return definitions
 
     @staticmethod
     def _item_id_from_url(url: str) -> str:
