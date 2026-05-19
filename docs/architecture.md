@@ -4,12 +4,13 @@
 
 캐릭터별로 반다이 공식 가챠/이치방쿠지 발매 정보를 구독하고 Discord로 알려주는 서비스.
 
-초기 타깃은 `짱구(クレヨンしんちゃん)` 수집가입니다. 이후 다른 캐릭터 키워드만 추가하면 확장됩니다.
+초기 타깃은 `짱구(クレヨンしんちゃん)`와 `산리오(サンリオ)` 수집가입니다. 이후 `filters.yaml`의 캐릭터 목록에서 `enabled`만 바꾸면 확장됩니다.
 
 ## Data flow
 
 ```text
-config.yaml subscriptions
+config.yaml runtime settings
+  -> filters.yaml enabled characters
   -> source scraper per keyword
   -> normalize ReleaseItem
   -> SQLite seen_items dedupe

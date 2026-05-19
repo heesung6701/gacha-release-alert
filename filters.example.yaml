@@ -1,0 +1,64 @@
+# 캐릭터 필터 목록
+# enabled: true 로 체크된 캐릭터만 알림 구독 대상이 됩니다.
+characters:
+  - id: shinchan
+    label: "짱구"
+    enabled: true
+    keywords:
+      - "クレヨンしんちゃん"
+      - "しんちゃん"
+    sources:
+      - "gashapon"
+      - "ichiban_kuji"
+
+  - id: sanrio
+    label: "산리오"
+    enabled: true
+    keywords:
+      - "サンリオ"
+      - "ハローキティ"
+      - "シナモロール"
+      - "マイメロディ"
+      - "クロミ"
+      - "ポムポムプリン"
+    sources:
+      - "gashapon"
+      - "ichiban_kuji"
+
+  - id: chiikawa
+    label: "치이카와"
+    enabled: false
+    keywords:
+      - "ちいかわ"
+    sources:
+      - "gashapon"
+      - "ichiban_kuji"
+
+  - id: tamagotchi
+    label: "다마고치"
+    enabled: false
+    keywords:
+      - "たまごっち"
+    sources:
+      - "gashapon"
+      - "ichiban_kuji"
+
+  - id: pokemon
+    label: "포켓몬"
+    enabled: false
+    keywords:
+      - "ポケットモンスター"
+      - "ポケモン"
+    sources:
+      - "gashapon"
+      - "ichiban_kuji"
+
+  - id: onepiece
+    label: "원피스"
+    enabled: false
+    keywords:
+      - "ONE PIECE"
+      - "ワンピース"
+    sources:
+      - "gashapon"
+      - "ichiban_kuji"

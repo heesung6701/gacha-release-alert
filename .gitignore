@@ -5,4 +5,5 @@ __pycache__/
 *.egg-info/
 data/
 config.yaml
+filters.yaml
 .DS_Store

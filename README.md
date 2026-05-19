@@ -21,9 +21,11 @@ python3 -m venv .venv
 source .venv/bin/activate
 python -m pip install -e '.[dev]'
 cp config.example.yaml config.yaml
+cp filters.example.yaml filters.yaml
 ```
 
-`config.yaml`에서 `discord_webhook_url`을 채운 뒤:
+`config.yaml`에서 `discord_webhook_url`을 채우고, `filters_path`가 `filters.yaml`을 가리키게 둡니다.
+`filters.yaml`에서는 알림 받을 캐릭터만 `enabled: true`로 체크하면 됩니다.
 
 ```bash
 # 실제 디스코드 전송 없이 파싱 결과만 보기
@@ -35,16 +37,47 @@ python -m gacha_alert.cli --config config.yaml
 
 ## 설정 예시
 
+`config.yaml`은 실행 환경/비밀값만 둡니다.
+
 ```yaml
 discord_webhook_url: "https://discord.com/api/webhooks/.../..."
 database_path: "data/gacha_alert.sqlite3"
-subscriptions:
-  - character: "짱구"
+request_timeout_seconds: 20
+filters_path: "filters.yaml"
+```
+
+`filters.yaml`은 캐릭터 필터 목록입니다. 체크박스 UI의 데이터 소스처럼 쓰기 위해 `enabled` 값을 둡니다.
+
+```yaml
+characters:
+  - id: "shinchan"
+    label: "짱구"
+    enabled: true
     keywords:
       - "クレヨンしんちゃん"
       - "しんちゃん"
     sources: ["gashapon", "ichiban_kuji"]
+
+  - id: "sanrio"
+    label: "산리오"
+    enabled: true
+    keywords:
+      - "サンリオ"
+      - "ハローキティ"
+      - "シナモロール"
+      - "マイメロディ"
+      - "クロミ"
+      - "ポムポムプリン"
+    sources: ["gashapon", "ichiban_kuji"]
+
+  - id: "chiikawa"
+    label: "치이카와"
+    enabled: false
+    keywords: ["ちいかわ"]
+    sources: ["gashapon", "ichiban_kuji"]
 ```
+
+기존처럼 `config.yaml`에 `subscriptions`를 직접 넣는 방식도 아직 지원하지만, 앞으로는 `filters.yaml` 방식이 기본입니다.
 
 ## 다음 단계
 
