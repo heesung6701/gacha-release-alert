@@ -1,0 +1,44 @@
+<!doctype html>
+<html lang="ko">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>가챠 발매 알리미</title>
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <header class="hero">
+      <div>
+        <p class="eyebrow">Bandai Gashapon / Ichiban Kuji</p>
+        <h1>가챠 발매 알리미</h1>
+        <p class="subtitle">짱구·산리오 등 관심 캐릭터의 공식 발매 정보를 한눈에 봅니다.</p>
+      </div>
+      <div class="stats" aria-live="polite">
+        <span id="item-count">-</span>
+        <small>개 항목</small>
+      </div>
+    </header>
+
+    <main>
+      <section class="toolbar" aria-label="필터">
+        <input id="search" type="search" placeholder="상품명, 캐릭터, 키워드 검색" autocomplete="off" />
+        <select id="source-filter" aria-label="소스 필터">
+          <option value="all">전체 소스</option>
+        </select>
+        <select id="character-filter" aria-label="캐릭터 필터">
+          <option value="all">전체 캐릭터</option>
+        </select>
+      </section>
+
+      <p id="generated" class="generated">데이터를 불러오는 중…</p>
+      <section id="items" class="grid" aria-live="polite"></section>
+      <p id="empty" class="empty" hidden>조건에 맞는 항목이 없습니다.</p>
+    </main>
+
+    <footer>
+      GitHub Actions가 주기적으로 데이터를 가져와 갱신합니다.
+    </footer>
+
+    <script src="app.js"></script>
+  </body>
+</html>

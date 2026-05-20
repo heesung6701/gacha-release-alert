@@ -1,5 +1,9 @@
 from __future__ import annotations
 
+import hashlib
+import hmac
+import json
+
 import httpx
 
 from .models import ReleaseItem
@@ -11,16 +15,22 @@ SOURCE_LABELS = {
 
 
 class DiscordNotifier:
-    def __init__(self, webhook_url: str, timeout_seconds: int = 20) -> None:
+    def __init__(self, webhook_url: str, timeout_seconds: int = 20, webhook_secret: str = "") -> None:
         self.webhook_url = webhook_url.strip()
         self.timeout_seconds = timeout_seconds
+        self.webhook_secret = webhook_secret.strip()
 
     def send(self, item: ReleaseItem) -> None:
         if not self.webhook_url:
             raise ValueError("discord_webhook_url is empty")
         payload = self._payload(item)
+        body = json.dumps(payload, ensure_ascii=False, separators=(",", ":")).encode("utf-8")
+        headers = {"Content-Type": "application/json"}
+        if self.webhook_secret:
+            signature = hmac.new(self.webhook_secret.encode("utf-8"), body, hashlib.sha256).hexdigest()
+            headers["X-Hub-Signature-256"] = f"sha256={signature}"
         with httpx.Client(timeout=self.timeout_seconds) as client:
-            client.post(self.webhook_url, json=payload).raise_for_status()
+            client.post(self.webhook_url, content=body, headers=headers).raise_for_status()
 
     def _payload(self, item: ReleaseItem) -> dict:
         fields = [
@@ -48,6 +58,6 @@ class DiscordNotifier:
             embed["thumbnail"] = {"url": item.image_url}
 
         return {
-            "content": f"🔔 **{item.character}** 신규 굿즈 알림",
+            "content": f"🔔 **{item.character}** 신규 굿즈 알림\n{item.title}\n{item.url}",
             "embeds": [embed],
         }

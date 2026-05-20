@@ -39,14 +39,10 @@ class GashaponScraper(SourceScraper):
         return f"https://gashapon.jp/products/result.php?free={quote(keyword)}"
 
     def fetch(self, character: str, keyword: str) -> list[ReleaseItem]:
-        with httpx.Client(timeout=self.timeout_seconds, headers={"User-Agent": USER_AGENT}) as client:
-            html = client.get(self.search_url(keyword), follow_redirects=True).raise_for_status().text
-            items = self.parse(html, character=character, keyword=keyword)
-            enriched_items: list[ReleaseItem] = []
-            for item in items:
-                detail_html = client.get(item.url, follow_redirects=True).raise_for_status().text
-                enriched_items.append(self.enrich_item(item, self.parse_detail(detail_html)))
-        return enriched_items
+        # Keep the polling path fast and reliable: first collect list-page items only.
+        # Detail pages can be slow or intermittently return 500, and fetching every
+        # historical item's detail before dedupe makes scheduled runs time out.
+        return super().fetch(character=character, keyword=keyword)
 
     def parse(self, html: str, character: str, keyword: str) -> list[ReleaseItem]:
         soup = BeautifulSoup(html, "html.parser")

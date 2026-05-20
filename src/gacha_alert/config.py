@@ -64,6 +64,7 @@ class FilterConfig(BaseModel):
 
 class AppConfig(BaseModel):
     discord_webhook_url: Union[HttpUrl, str] = ""
+    webhook_secret: str = ""
     database_path: str = "data/gacha_alert.sqlite3"
     request_timeout_seconds: int = Field(default=20, ge=1, le=120)
     filters_path: Optional[str] = None
@@ -79,6 +80,10 @@ class AppConfig(BaseModel):
     @property
     def webhook_url_str(self) -> str:
         return str(self.discord_webhook_url).strip()
+
+    @property
+    def webhook_secret_str(self) -> str:
+        return self.webhook_secret.strip()
 
 
 def load_filter_config(path: str | Path) -> FilterConfig:

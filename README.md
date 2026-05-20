@@ -12,6 +12,7 @@
 - SQLite로 이미 알림 보낸 상품 dedupe
 - Discord webhook으로 신규 상품 embed 알림
   - Gashapon은 상세 페이지에서 발매시기/가격/종류수/대상연령/설명/라인업명을 보강
+- GitHub Actions로 주기 수집 후 GitHub Pages 정적 대시보드 배포
 - cron/GitHub Actions/서버에서 주기 실행 가능한 CLI
 
 ## 빠른 시작
@@ -34,7 +35,18 @@ python -m gacha_alert.cli --config config.yaml --dry-run
 
 # 신규 항목을 디스코드로 전송
 python -m gacha_alert.cli --config config.yaml
+
+# GitHub Pages용 정적 JSON 생성
+python -m gacha_alert.cli --config config.pages.yaml --export-json public/data/releases.json
 ```
+
+## GitHub Pages 대시보드
+
+`.github/workflows/pages.yml`은 6시간마다 공식 사이트 데이터를 가져와 `public/data/releases.json`을 만들고, `public/` 디렉터리를 GitHub Pages로 배포합니다.
+
+1. GitHub 저장소 Settings → Pages → Source를 **GitHub Actions**로 설정합니다.
+2. Actions 탭에서 **Fetch gacha releases and deploy Pages** 워크플로우를 수동 실행하거나, `main`에 push하면 자동 배포됩니다.
+3. 배포 후 Pages URL에서 캐릭터/소스/검색어 필터로 최신 항목을 볼 수 있습니다.
 
 ## 설정 예시
 
@@ -42,6 +54,7 @@ python -m gacha_alert.cli --config config.yaml
 
 ```yaml
 discord_webhook_url: "https://discord.com/api/webhooks/.../..."
+webhook_secret: ""  # Hermes 웹훅을 쓰면 HMAC secret 입력
 database_path: "data/gacha_alert.sqlite3"
 request_timeout_seconds: 20
 filters_path: "filters.yaml"
