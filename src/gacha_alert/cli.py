@@ -33,14 +33,21 @@ def collect_items(config: AppConfig) -> list[ReleaseItem]:
 
 
 def _dedupe_in_memory(items: Iterable[ReleaseItem]) -> list[ReleaseItem]:
-    seen: set[str] = set()
+    seen_ids: set[str] = set()
+    seen_titles: set[tuple[str, str, str]] = set()
     unique: list[ReleaseItem] = []
     for item in items:
-        if item.dedupe_key in seen:
+        title_key = (item.source, item.character, _normalize_title(item.title))
+        if item.dedupe_key in seen_ids or title_key in seen_titles:
             continue
-        seen.add(item.dedupe_key)
+        seen_ids.add(item.dedupe_key)
+        seen_titles.add(title_key)
         unique.append(item)
     return unique
+
+
+def _normalize_title(title: str) -> str:
+    return " ".join(title.casefold().split())
 
 
 def run(config_path: str, dry_run: bool = False, mark_seen_on_dry_run: bool = False) -> int:

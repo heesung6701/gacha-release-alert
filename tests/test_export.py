@@ -42,3 +42,31 @@ subscriptions:
     assert payload["generated_at"]
     assert payload["items"][0]["title"] == "테스트 가챠"
     assert payload["items"][0]["character"] == "짱구"
+
+
+def test_dedupe_in_memory_collapses_same_source_character_title():
+    items = [
+        ReleaseItem(
+            source="ichiban_kuji",
+            item_id="shinchan9-2",
+            title="一番くじ 劇場版クレヨンしんちゃん なつかシネマズ",
+            url="https://1kuji.com/products/shinchan9-2",
+            character="짱구",
+            keyword="クレヨンしんちゃん",
+            release_text="2026年01月01日発売予定",
+        ),
+        ReleaseItem(
+            source="ichiban_kuji",
+            item_id="shinchan9",
+            title="一番くじ 劇場版クレヨンしんちゃん なつかシネマズ",
+            url="https://1kuji.com/products/shinchan9",
+            character="짱구",
+            keyword="しんちゃん",
+            release_text="2025年01月01日発売予定",
+        ),
+    ]
+
+    unique = cli._dedupe_in_memory(items)
+
+    assert len(unique) == 1
+    assert unique[0].item_id == "shinchan9-2"
