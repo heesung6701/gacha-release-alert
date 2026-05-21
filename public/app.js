@@ -50,8 +50,23 @@ function populateFilters(items) {
   for (const character of characters) characterEl.append(option(character, character));
 }
 
+function displayValue(item, field) {
+  return item[`${field}_ko`] || item[field];
+}
+
 function matches(item) {
-  const haystack = [item.title, item.character, item.keyword, item.source, item.release_text, item.price]
+  const haystack = [
+    item.title,
+    item.title_ko,
+    item.character,
+    item.keyword,
+    item.source,
+    item.release_text,
+    item.release_text_ko,
+    item.status_text,
+    item.status_text_ko,
+    item.price,
+  ]
     .filter(Boolean)
     .join(' ')
     .toLowerCase();
@@ -64,7 +79,11 @@ function render() {
   const items = state.items.filter(matches);
   countEl.textContent = items.length.toLocaleString('ko-KR');
   emptyEl.hidden = items.length > 0;
-  itemsEl.innerHTML = items.map((item) => `
+  itemsEl.innerHTML = items.map((item) => {
+    const title = displayValue(item, 'title');
+    const releaseText = displayValue(item, 'release_text');
+    const statusText = displayValue(item, 'status_text');
+    return `
     <article class="card">
       ${item.image_url ? `<img class="thumb" src="${escapeHtml(item.image_url)}" alt="" loading="lazy" />` : ''}
       <div class="card-body">
@@ -72,16 +91,19 @@ function render() {
           <span class="badge">${escapeHtml(sourceLabels[item.source] || item.source)}</span>
           <span class="badge">${escapeHtml(item.character)}</span>
         </div>
-        <h2>${escapeHtml(item.title)}</h2>
+        <h2>${escapeHtml(title)}</h2>
         <p class="meta">
-          ${item.release_text ? `발매: ${escapeHtml(item.release_text)}<br />` : ''}
+          ${releaseText ? `발매: ${escapeHtml(releaseText)}<br />` : ''}
+          ${statusText ? `판매: ${escapeHtml(statusText)}<br />` : ''}
           ${item.price ? `가격: ${escapeHtml(item.price)}<br />` : ''}
           검색어: ${escapeHtml(item.keyword)}
+          ${item.title_ko && item.title_ko !== item.title ? `<br /><span class="original-title">원문: ${escapeHtml(item.title)}</span>` : ''}
         </p>
         <a href="${escapeHtml(item.url)}" target="_blank" rel="noreferrer">공식 페이지 보기 →</a>
       </div>
     </article>
-  `).join('');
+  `;
+  }).join('');
 }
 
 async function boot() {

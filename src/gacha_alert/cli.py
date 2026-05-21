@@ -9,6 +9,7 @@ from datetime import datetime, timezone
 from pathlib import Path
 
 from .config import AppConfig, load_config
+from .korean import translated_release_dict
 from .models import ReleaseItem
 from .notifier import DiscordNotifier
 from .sources import SCRAPERS
@@ -85,7 +86,7 @@ def export_json(config_path: str, output_path: str) -> int:
     payload = {
         "generated_at": datetime.now(timezone.utc).isoformat(),
         "count": len(items),
-        "items": [asdict(item) for item in items],
+        "items": [translated_release_dict(asdict(item)) for item in items],
     }
     output = Path(output_path)
     output.parent.mkdir(parents=True, exist_ok=True)

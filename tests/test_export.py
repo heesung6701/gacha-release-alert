@@ -41,6 +41,7 @@ subscriptions:
     assert payload["count"] == 1
     assert payload["generated_at"]
     assert payload["items"][0]["title"] == "테스트 가챠"
+    assert payload["items"][0]["title_ko"] == "테스트 가챠"
     assert payload["items"][0]["character"] == "짱구"
 
 

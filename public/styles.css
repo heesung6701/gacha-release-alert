@@ -153,6 +153,11 @@ input, select {
   margin: 0 0 14px;
 }
 
+.original-title {
+  color: #7d8798;
+  font-size: 12px;
+}
+
 .card a {
   color: var(--accent-2);
   font-weight: 700;
