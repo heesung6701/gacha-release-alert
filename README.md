@@ -47,7 +47,7 @@ python -m gacha_alert.cli --config config.pages.yaml --export-json public/data/r
 
 1. GitHub 저장소 Settings → Pages → Source를 **GitHub Actions**로 설정합니다.
 2. Actions 탭에서 **Fetch gacha releases and deploy Pages** 워크플로우를 수동 실행하거나, `main`에 push하면 자동 배포됩니다.
-3. 스케줄 실행에서 데이터가 바뀌면 `chore: update gacha release data` 커밋이 자동으로 생깁니다. 데이터가 같으면 `generated_at`도 유지되어 불필요한 커밋이 생기지 않습니다.
+3. 스케줄 실행에서 데이터가 바뀌면 `chore: update gacha release data` 커밋이 자동으로 생깁니다. `public/data/releases.json`은 로컬 `data/` 캐시 ignore 규칙과 충돌하지 않도록 workflow에서 명시적으로 stage합니다. 데이터가 같으면 `generated_at`도 유지되어 불필요한 커밋이 생기지 않습니다.
 4. 배포 후 Pages URL에서 캐릭터/소스/검색어 필터로 최신 항목을 볼 수 있습니다.
 
 ## 설정 예시
