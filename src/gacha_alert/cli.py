@@ -83,12 +83,23 @@ def run(config_path: str, dry_run: bool = False, mark_seen_on_dry_run: bool = Fa
 def export_json(config_path: str, output_path: str) -> int:
     config = load_config(config_path)
     items = collect_items(config)
-    payload = {
-        "generated_at": datetime.now(timezone.utc).isoformat(),
-        "count": len(items),
-        "items": [translated_release_dict(asdict(item)) for item in items],
-    }
+    exported_items = [translated_release_dict(asdict(item)) for item in items]
+    generated_at = datetime.now(timezone.utc).isoformat()
     output = Path(output_path)
+
+    if output.exists():
+        try:
+            existing_payload = json.loads(output.read_text(encoding="utf-8"))
+            if existing_payload.get("items") == exported_items and existing_payload.get("generated_at"):
+                generated_at = existing_payload["generated_at"]
+        except json.JSONDecodeError:
+            pass
+
+    payload = {
+        "generated_at": generated_at,
+        "count": len(items),
+        "items": exported_items,
+    }
     output.parent.mkdir(parents=True, exist_ok=True)
     output.write_text(json.dumps(payload, ensure_ascii=False, indent=2), encoding="utf-8")
     print(f"exported={len(items)} path={output}")

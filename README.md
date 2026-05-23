@@ -12,7 +12,8 @@
 - SQLite로 이미 알림 보낸 상품 dedupe
 - Discord webhook으로 신규 상품 embed 알림
   - Gashapon은 상세 페이지에서 발매시기/가격/종류수/대상연령/설명/라인업명을 보강
-- GitHub Actions로 주기 수집 후 GitHub Pages 정적 대시보드 배포
+- GitHub Actions cron으로 주기 수집 후 `public/data/releases.json` 커밋
+- 커밋된 JSON을 기반으로 GitHub Pages 정적 대시보드 배포
 - cron/GitHub Actions/서버에서 주기 실행 가능한 CLI
 
 ## 빠른 시작
@@ -42,11 +43,12 @@ python -m gacha_alert.cli --config config.pages.yaml --export-json public/data/r
 
 ## GitHub Pages 대시보드
 
-`.github/workflows/pages.yml`은 6시간마다 공식 사이트 데이터를 가져와 `public/data/releases.json`을 만들고, `public/` 디렉터리를 GitHub Pages로 배포합니다.
+`.github/workflows/pages.yml`은 6시간마다 공식 사이트 데이터를 가져와 `public/data/releases.json`을 갱신하고, 변경이 있을 때만 해당 JSON을 `main`에 커밋한 뒤 `public/` 디렉터리를 GitHub Pages로 배포합니다. `push` 이벤트에서는 이미 커밋된 `public/` 내용을 그대로 배포하므로, Pages는 저장소에 남은 데이터 스냅샷을 기준으로 구성됩니다.
 
 1. GitHub 저장소 Settings → Pages → Source를 **GitHub Actions**로 설정합니다.
 2. Actions 탭에서 **Fetch gacha releases and deploy Pages** 워크플로우를 수동 실행하거나, `main`에 push하면 자동 배포됩니다.
-3. 배포 후 Pages URL에서 캐릭터/소스/검색어 필터로 최신 항목을 볼 수 있습니다.
+3. 스케줄 실행에서 데이터가 바뀌면 `chore: update gacha release data` 커밋이 자동으로 생깁니다. 데이터가 같으면 `generated_at`도 유지되어 불필요한 커밋이 생기지 않습니다.
+4. 배포 후 Pages URL에서 캐릭터/소스/검색어 필터로 최신 항목을 볼 수 있습니다.
 
 ## 설정 예시
 

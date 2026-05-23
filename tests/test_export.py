@@ -45,6 +45,40 @@ subscriptions:
     assert payload["items"][0]["character"] == "짱구"
 
 
+def test_export_json_reuses_generated_at_when_items_are_unchanged(tmp_path, monkeypatch):
+    config_path = tmp_path / "config.yaml"
+    output_path = tmp_path / "public" / "data" / "releases.json"
+    config_path.write_text(
+        """
+discord_webhook_url: ""
+database_path: "data/test.sqlite3"
+subscriptions:
+  - character: "짱구"
+    keywords: ["クレヨンしんちゃん"]
+    sources: ["gashapon"]
+""".strip(),
+        encoding="utf-8",
+    )
+
+    item = ReleaseItem(
+        source="gashapon",
+        item_id="1",
+        title="테스트 가챠",
+        url="https://example.com/item/1",
+        character="짱구",
+        keyword="クレヨンしんちゃん",
+    )
+    monkeypatch.setattr(cli, "collect_items", lambda config: [item])
+
+    assert cli.export_json(str(config_path), str(output_path)) == 0
+    first_payload = json.loads(output_path.read_text(encoding="utf-8"))
+    assert cli.export_json(str(config_path), str(output_path)) == 0
+    second_payload = json.loads(output_path.read_text(encoding="utf-8"))
+
+    assert second_payload["generated_at"] == first_payload["generated_at"]
+    assert second_payload == first_payload
+
+
 def test_dedupe_in_memory_collapses_same_source_character_title():
     items = [
         ReleaseItem(
