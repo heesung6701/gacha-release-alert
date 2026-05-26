@@ -3,7 +3,9 @@ __pycache__/
 .pytest_cache/
 .ruff_cache/
 *.egg-info/
-data/
+/data/
+node_modules/
+dist/
 config.yaml
 filters.yaml
 .DS_Store

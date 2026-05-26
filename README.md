@@ -16,7 +16,7 @@
 - Discord webhook으로 신규 상품 embed 알림
   - Gashapon은 상세 페이지에서 발매시기/가격/종류수/대상연령/설명/라인업명을 보강
 - GitHub Actions cron으로 주기 수집 후 `public/data/releases.json` 커밋
-- 커밋된 JSON을 기반으로 GitHub Pages 정적 대시보드 배포
+- React/Vite 대시보드를 빌드해 GitHub Pages 배포
 - cron/GitHub Actions/서버에서 주기 실행 가능한 CLI
 
 ## 빠른 시작
@@ -26,6 +26,7 @@ cd /Users/quokkaman/github/gacha-release-alert
 python3 -m venv .venv
 source .venv/bin/activate
 python -m pip install -e '.[dev]'
+npm install
 cp config.example.yaml config.yaml
 cp filters.example.yaml filters.yaml
 ```
@@ -46,7 +47,9 @@ python -m gacha_alert.cli --config config.pages.yaml --export-json public/data/r
 
 ## GitHub Pages 대시보드
 
-`.github/workflows/pages.yml`은 6시간마다 공식 사이트 데이터를 가져와 `public/data/releases.json`을 갱신하고, 변경이 있을 때만 해당 JSON을 `main`에 커밋한 뒤 `public/` 디렉터리를 GitHub Pages로 배포합니다. `push` 이벤트에서는 이미 커밋된 `public/` 내용을 그대로 배포하므로, Pages는 저장소에 남은 데이터 스냅샷을 기준으로 구성됩니다.
+대시보드는 React/Vite 앱입니다. 개발 중에는 `npm run dev`, 배포 빌드는 `npm run build`를 사용합니다. 빌드 결과물은 `dist/`에 생성되고, Vite가 `public/data/releases.json`을 함께 복사합니다.
+
+`.github/workflows/pages.yml`은 6시간마다 공식 사이트 데이터를 가져와 `public/data/releases.json`을 갱신하고, 변경이 있을 때만 해당 JSON을 `main`에 커밋한 뒤 React 대시보드를 빌드해 `dist/` 디렉터리를 GitHub Pages로 배포합니다. `push` 이벤트에서는 이미 커밋된 `public/data/releases.json` 스냅샷을 포함해 빌드/배포합니다.
 
 1. GitHub 저장소 Settings → Pages → Source를 **GitHub Actions**로 설정합니다.
 2. Actions 탭에서 **Fetch gacha releases and deploy Pages** 워크플로우를 수동 실행하거나, `main`에 push하면 자동 배포됩니다.

@@ -2,7 +2,7 @@
 
 ## Project scope
 
-- This repository is for `gacha-release-alert`: collecting Japanese gacha / lottery release data, exporting `public/data/releases.json`, and deploying the static GitHub Pages dashboard.
+- This repository is for `gacha-release-alert`: collecting Japanese gacha / lottery release data, exporting `public/data/releases.json`, and deploying the React/Vite GitHub Pages dashboard.
 - Keep discussion and repository work focused on this project when operating from the related Discord channel/thread.
 - Do not commit local/private runtime configuration or secrets, especially `config.yaml`, `filters.yaml`, Discord webhook URLs, local SQLite/cache files under `data/`, virtualenvs, or generated tool caches.
 
@@ -19,7 +19,7 @@
 4. Run relevant verification before committing:
    - `python -m pytest`
    - `python -m ruff check src tests` when `ruff` is available.
-   - There is currently no npm build/test flow in this Python/static repo; if a future `package.json` adds scripts, run the relevant build/test/lint scripts too.
+   - `npm run build`, `npm test`, and `npm run lint` when `package.json` is present.
 5. Commit finished changes with a concise conventional commit message.
 6. Push the commit to the configured remote branch.
 7. After pushing, check the GitHub Actions result for the pushed commit. If it fails, analyze the logs, fix the root cause, verify locally again, commit, push, and repeat until Actions passes or a repo/platform permission issue blocks completion.
@@ -28,7 +28,7 @@
 ## GitHub Actions / Pages notes
 
 - `.github/workflows/pages.yml` runs on `workflow_dispatch`, a 6-hour schedule, and pushes to `main`.
-- Scheduled/manual runs fetch data with `config.pages.yaml`, export `public/data/releases.json`, commit the data when changed, and deploy `public/` to GitHub Pages.
+- Scheduled/manual runs fetch data with `config.pages.yaml`, export `public/data/releases.json`, commit the data when changed, build the React dashboard with Vite, and deploy `dist/` to GitHub Pages.
 - `public/data/releases.json` is intentionally tracked even though the local cache directory `data/` is ignored. If the workflow stages release data, use `git add -f public/data/releases.json` so broad ignore rules do not break the scheduled job.
 - For Pages deployment failures, verify the repository Settings → Pages source is set to **GitHub Actions** and inspect failed workflow logs before changing code.
 
