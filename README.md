@@ -6,9 +6,12 @@
 
 - 캐릭터별 구독 키워드 설정
   - 예: `クレヨンしんちゃん`, `ちいかわ`, `サンリオ`
-- 공식 소스 2개 감시
+- 공식 소스 5개 감시
   - Bandai Gashapon: `https://gashapon.jp/products/result.php?free=...`
   - Ichiban Kuji: `https://1kuji.com/search?word=...`
+  - Takara Tomy Arts: `https://search.takaratomy-arts.co.jp/search?...`
+  - Qualia: `https://qualia-45.jp/products/`
+  - Ken Elephant: `https://kenelestore.jp/collections/miniature__latest/products.json?...`
 - SQLite로 이미 알림 보낸 상품 dedupe
 - Discord webhook으로 신규 상품 embed 알림
   - Gashapon은 상세 페이지에서 발매시기/가격/종류수/대상연령/설명/라인업명을 보강

@@ -16,6 +16,9 @@ const characterEl = document.querySelector('#character-filter');
 const sourceLabels = {
   gashapon: 'Bandai Gashapon',
   ichiban_kuji: 'Ichiban Kuji',
+  takaratomy_arts: 'Takara Tomy Arts',
+  qualia: 'Qualia',
+  ken_elephant: 'Ken Elephant',
 };
 
 function escapeHtml(value = '') {

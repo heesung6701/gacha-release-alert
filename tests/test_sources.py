@@ -1,4 +1,10 @@
-from gacha_alert.sources import GashaponScraper, IchibanKujiScraper
+from gacha_alert.sources import (
+    GashaponScraper,
+    IchibanKujiScraper,
+    KenElephantScraper,
+    QualiaScraper,
+    TakaraTomyArtsScraper,
+)
 
 
 def test_parse_gashapon_card():
@@ -43,3 +49,76 @@ def test_parse_ichiban_kuji_card():
     assert items[0].release_text == "2026年08月08日(土)より順次発売予定"
     assert items[0].status_text == "店頭販売"
     assert items[0].dedupe_key == "ichiban_kuji:shinchan13"
+
+
+def test_parse_takara_tomy_arts_search_result():
+    html = """
+    <a href="/click?url=https%3A%2F%2Fwww.takaratomy-arts.co.jp%2Fitems%2Fitem.html%3Fn%3DY903595">
+      サンリオキャラクターズ ビビッドネオンピンバッジ｜商品情報｜タカラトミーアーツ
+    </a>
+    """
+
+    items = TakaraTomyArtsScraper().parse(html, character="산리오", keyword="サンリオ")
+
+    assert len(items) == 1
+    assert items[0].source == "takaratomy_arts"
+    assert items[0].item_id == "Y903595"
+    assert items[0].title == "サンリオキャラクターズ ビビッドネオンピンバッジ"
+    assert items[0].dedupe_key == "takaratomy_arts:Y903595"
+
+
+def test_parse_qualia_product_links_and_detail():
+    listing_html = """
+    <div class="list_gacha">
+      <a href="https://qualia-45.jp/distinations/niccolino_chuka_nuin/">
+        <img src="https://example.com/item.jpg" />
+      </a>
+    </div>
+    """
+    detail_html = """
+    <html><head><title>にっこりーノ　NEW中華料理のぬいぐるみ | Qualia</title></head>
+    <body>
+      <h1>にっこりーノ　NEW中華料理のぬいぐるみ</h1>
+      <p>発売日：2026年5月</p>
+      <p>価格　：400円　全6種</p>
+      <h2>Lineup</h2><p>ももまん</p><p>餃子</p>
+      <img src="https://example.com/qualia.jpg" />
+    </body></html>
+    """
+
+    scraper = QualiaScraper()
+    links = scraper.parse(listing_html, character="기타", keyword="にっこりーノ")
+    detail = scraper.parse_detail(
+        detail_html,
+        url="https://qualia-45.jp/distinations/niccolino_chuka_nuin/",
+        character="기타",
+        keyword="にっこりーノ",
+    )
+
+    assert links[0].item_id == "niccolino_chuka_nuin"
+    assert detail.source == "qualia"
+    assert detail.release_text == "2026年5月"
+    assert detail.price == "400円　全6種"
+    assert detail.lineup_names[:2] == ["ももまん", "餃子"]
+
+
+def test_parse_ken_elephant_products_json():
+    products = [
+        {
+            "id": 123,
+            "title": "PEZ×はぴだんぶい マスコット",
+            "handle": "gc0714c",
+            "body_html": "<p>サンリオキャラクターズのミニチュアコレクション</p>",
+            "images": [{"src": "https://example.com/ken.jpg"}],
+            "variants": [{"price": "500", "available": True}],
+            "tags": ["ミニチュアコレクション"],
+        }
+    ]
+
+    items = KenElephantScraper().parse_products(products, character="산리오", keyword="サンリオ")
+
+    assert len(items) == 1
+    assert items[0].source == "ken_elephant"
+    assert items[0].item_id == "123"
+    assert items[0].url == "https://kenelestore.jp/products/gc0714c"
+    assert items[0].price == "¥500"

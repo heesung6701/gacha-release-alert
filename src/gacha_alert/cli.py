@@ -107,7 +107,7 @@ def export_json(config_path: str, output_path: str) -> int:
 
 
 def build_parser() -> argparse.ArgumentParser:
-    parser = argparse.ArgumentParser(description="Bandai Gashapon / Ichiban Kuji release alerts")
+    parser = argparse.ArgumentParser(description="Gacha and character goods release alerts")
     parser.add_argument("--config", default="config.yaml", help="Path to config YAML")
     parser.add_argument("--dry-run", action="store_true", help="Print new items without sending Discord")
     parser.add_argument(

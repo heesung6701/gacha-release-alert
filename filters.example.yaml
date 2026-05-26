@@ -10,6 +10,9 @@ characters:
     sources:
       - "gashapon"
       - "ichiban_kuji"
+      - "takaratomy_arts"
+      - "qualia"
+      - "ken_elephant"
 
   - id: sanrio
     label: "산리오"
@@ -24,6 +27,9 @@ characters:
     sources:
       - "gashapon"
       - "ichiban_kuji"
+      - "takaratomy_arts"
+      - "qualia"
+      - "ken_elephant"
 
   - id: chiikawa
     label: "치이카와"
@@ -33,6 +39,9 @@ characters:
     sources:
       - "gashapon"
       - "ichiban_kuji"
+      - "takaratomy_arts"
+      - "qualia"
+      - "ken_elephant"
 
   - id: tamagotchi
     label: "다마고치"
@@ -42,6 +51,9 @@ characters:
     sources:
       - "gashapon"
       - "ichiban_kuji"
+      - "takaratomy_arts"
+      - "qualia"
+      - "ken_elephant"
 
   - id: pokemon
     label: "포켓몬"
@@ -52,6 +64,9 @@ characters:
     sources:
       - "gashapon"
       - "ichiban_kuji"
+      - "takaratomy_arts"
+      - "qualia"
+      - "ken_elephant"
 
   - id: onepiece
     label: "원피스"
@@ -62,3 +77,6 @@ characters:
     sources:
       - "gashapon"
       - "ichiban_kuji"
+      - "takaratomy_arts"
+      - "qualia"
+      - "ken_elephant"

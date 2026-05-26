@@ -6,7 +6,13 @@ from typing import Literal, Optional, Union
 import yaml
 from pydantic import BaseModel, Field, HttpUrl, field_validator, model_validator
 
-SourceName = Literal["gashapon", "ichiban_kuji"]
+SourceName = Literal[
+    "gashapon",
+    "ichiban_kuji",
+    "takaratomy_arts",
+    "qualia",
+    "ken_elephant",
+]
 
 
 class Subscription(BaseModel):

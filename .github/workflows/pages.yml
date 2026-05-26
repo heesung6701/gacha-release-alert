@@ -50,6 +50,7 @@ jobs:
             echo "No release data changes to commit."
           else
             git commit -m "chore: update gacha release data"
+            git pull --rebase origin "${GITHUB_REF_NAME:-main}"
             git push
           fi
 
