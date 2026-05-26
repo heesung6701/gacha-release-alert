@@ -74,7 +74,7 @@ h1 {
 
 .toolbar {
   display: grid;
-  grid-template-columns: 1fr repeat(2, minmax(160px, 220px));
+  grid-template-columns: minmax(220px, 1fr) minmax(260px, 1.4fr) minmax(160px, 220px);
   gap: 12px;
   margin: 12px 0 16px;
 }
@@ -87,6 +87,48 @@ input, select {
   color: var(--text);
   font: inherit;
   padding: 13px 14px;
+}
+
+.source-filter {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  min-width: 0;
+  margin: 0;
+  padding: 8px;
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  background: var(--card);
+}
+
+.source-filter legend {
+  padding: 0 6px;
+  color: var(--muted);
+  font-size: 12px;
+}
+
+.check-option {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  border: 1px solid rgba(255, 255, 255, .12);
+  border-radius: 999px;
+  color: var(--muted);
+  cursor: pointer;
+  font-size: 13px;
+  line-height: 1;
+  padding: 6px 9px;
+}
+
+.check-option input {
+  width: auto;
+  accent-color: var(--accent);
+  margin: 0;
+}
+
+.check-option:has(input:checked) {
+  border-color: rgba(255, 122, 182, .55);
+  color: var(--text);
 }
 
 .generated {

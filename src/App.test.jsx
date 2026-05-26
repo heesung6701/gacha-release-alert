@@ -46,9 +46,18 @@ describe('App', () => {
 
     expect(screen.getByText('2')).toBeInTheDocument();
     expect(screen.getByText(/마지막 갱신:/)).toHaveTextContent('총 2개');
-    expect(screen.getByLabelText('소스 필터')).toHaveDisplayValue('전체 소스');
+    expect(screen.getByLabelText('Bandai Gashapon')).toBeChecked();
+    expect(screen.getByLabelText('Ichiban Kuji')).toBeChecked();
     expect(screen.getByRole('heading', { name: '산리오 복권' })).toBeInTheDocument();
 
+    fireEvent.click(screen.getByLabelText('Ichiban Kuji'));
+
+    expect(screen.getByLabelText('Ichiban Kuji')).not.toBeChecked();
+    expect(screen.getByRole('heading', { name: '짱구 캡슐토이' })).toBeInTheDocument();
+    expect(screen.queryByRole('heading', { name: '산리오 복권' })).not.toBeInTheDocument();
+    expect(screen.getByText('1')).toBeInTheDocument();
+
+    fireEvent.click(screen.getByLabelText('Ichiban Kuji'));
     fireEvent.change(screen.getByPlaceholderText('상품명, 캐릭터, 키워드 검색'), {
       target: { value: '짱구' },
     });

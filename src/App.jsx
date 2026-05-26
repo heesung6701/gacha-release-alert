@@ -10,7 +10,7 @@ import './styles.css';
 
 const initialFilters = {
   query: '',
-  source: 'all',
+  sources: [],
   character: 'all',
 };
 
@@ -87,6 +87,23 @@ function App() {
     setFilters((current) => ({ ...current, [name]: value }));
   }
 
+  function toggleSource(source) {
+    setFilters((current) => {
+      const selectedSources = current.sources.length ? current.sources : options.sources;
+      const nextSources = selectedSources.includes(source)
+        ? selectedSources.filter((selectedSource) => selectedSource !== source)
+        : [...selectedSources, source];
+      return {
+        ...current,
+        sources: nextSources.length === options.sources.length ? [] : nextSources,
+      };
+    });
+  }
+
+  function isSourceSelected(source) {
+    return filters.sources.length === 0 || filters.sources.includes(source);
+  }
+
   return (
     <>
       <header className="hero">
@@ -110,16 +127,19 @@ function App() {
             value={filters.query}
             onChange={(event) => updateFilter('query', event.target.value.trim())}
           />
-          <select
-            aria-label="소스 필터"
-            value={filters.source}
-            onChange={(event) => updateFilter('source', event.target.value)}
-          >
-            <option value="all">전체 소스</option>
+          <fieldset className="source-filter" aria-label="소스 필터">
+            <legend>소스 필터</legend>
             {options.sources.map((source) => (
-              <option key={source} value={source}>{sourceLabels[source] || source}</option>
+              <label key={source} className="check-option">
+                <input
+                  type="checkbox"
+                  checked={isSourceSelected(source)}
+                  onChange={() => toggleSource(source)}
+                />
+                <span>{sourceLabels[source] || source}</span>
+              </label>
             ))}
-          </select>
+          </fieldset>
           <select
             aria-label="캐릭터 필터"
             value={filters.character}

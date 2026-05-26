@@ -42,10 +42,11 @@ describe('dashboard helpers', () => {
     });
   });
 
-  it('filters by query, source, and character across localized fields', () => {
-    expect(filterItems(items, { query: '복권', source: 'all', character: 'all' })).toEqual([items[1]]);
-    expect(filterItems(items, { query: '300', source: 'gashapon', character: '짱구' })).toEqual([items[0]]);
-    expect(filterItems(items, { query: '짱구', source: 'ichiban_kuji', character: 'all' })).toEqual([]);
+  it('filters by query, multiple selected sources, and character across localized fields', () => {
+    expect(filterItems(items, { query: '복권', sources: [], character: 'all' })).toEqual([items[1]]);
+    expect(filterItems(items, { query: '300', sources: ['gashapon'], character: '짱구' })).toEqual([items[0]]);
+    expect(filterItems(items, { query: '', sources: ['gashapon', 'ichiban_kuji'], character: 'all' })).toEqual(items);
+    expect(filterItems(items, { query: '짱구', sources: ['ichiban_kuji'], character: 'all' })).toEqual([]);
   });
 
   it('formats generated metadata in Korean with stable count fallback', () => {

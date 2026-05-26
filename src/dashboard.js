@@ -37,9 +37,10 @@ function searchableText(item) {
 
 export function filterItems(items, filters) {
   const query = filters.query.trim().toLowerCase();
+  const selectedSources = filters.sources || (filters.source && filters.source !== 'all' ? [filters.source] : []);
   return items.filter((item) => {
     return (!query || searchableText(item).includes(query))
-      && (filters.source === 'all' || item.source === filters.source)
+      && (selectedSources.length === 0 || selectedSources.includes(item.source))
       && (filters.character === 'all' || item.character === filters.character);
   });
 }
