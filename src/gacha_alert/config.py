@@ -12,6 +12,9 @@ SourceName = Literal[
     "takaratomy_arts",
     "qualia",
     "ken_elephant",
+    "kitan_club",
+    "toys_cabin",
+    "rement",
 ]
 
 

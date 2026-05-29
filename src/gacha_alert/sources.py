@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import re
 from abc import ABC, abstractmethod
 from html import unescape
 from urllib.parse import parse_qs, quote, unquote, urljoin, urlparse
@@ -428,10 +429,250 @@ class KenElephantScraper(SourceScraper):
         return items
 
 
+class KitanClubScraper(SourceScraper):
+    source_name = "kitan_club"
+    base_url = "https://kitan.jp"
+    products_url = "https://kitan.jp/products/"
+
+    def search_url(self, keyword: str) -> str:
+        return self.products_url
+
+    def fetch(self, character: str, keyword: str) -> list[ReleaseItem]:
+        with httpx.Client(timeout=self.timeout_seconds, headers={"User-Agent": USER_AGENT}) as client:
+            html = client.get(self.products_url, follow_redirects=True).raise_for_status().text
+            candidates = self.parse(html, character=character, keyword=keyword)
+            for category_url in self._matching_category_urls(html, keyword):
+                category_html = client.get(
+                    category_url, follow_redirects=True
+                ).raise_for_status().text
+                candidates.extend(self.parse(category_html, character=character, keyword=keyword))
+            candidates = _unique_by_dedupe_key(candidates)
+            items: list[ReleaseItem] = []
+            for candidate in candidates:
+                detail_html = client.get(candidate.url, follow_redirects=True).raise_for_status().text
+                item = self.parse_detail(detail_html, candidate.url, character=character, keyword=keyword)
+                haystack = " ".join(
+                    [item.title, item.description or "", " ".join(item.lineup_names)]
+                ).casefold()
+                if keyword.casefold() in haystack:
+                    items.append(item)
+            return items
+
+    def parse(self, html: str, character: str, keyword: str) -> list[ReleaseItem]:
+        soup = BeautifulSoup(html, "html.parser")
+        items: list[ReleaseItem] = []
+        for link in soup.select('.c-productBox__item a[href*="/products/"]'):
+            url = urljoin(self.base_url, link.get("href", ""))
+            item_id = urlparse(url).path.rstrip("/").split("/")[-1]
+            if not item_id or item_id == "products":
+                continue
+            image = link.select_one("img[src]")
+            title = image.get("alt", "").strip() if image else ""
+            if not title:
+                title = item_id.replace("_", " ")
+            items.append(
+                ReleaseItem(
+                    source=self.source_name,
+                    item_id=item_id,
+                    title=title,
+                    url=url,
+                    character=character,
+                    keyword=keyword,
+                    image_url=image.get("src") if image else None,
+                )
+            )
+        return _unique_by_dedupe_key(items)
+
+    def parse_detail(self, html: str, url: str, character: str, keyword: str) -> ReleaseItem:
+        soup = BeautifulSoup(html, "html.parser")
+        item_id = urlparse(url).path.rstrip("/").split("/")[-1]
+        definitions = self._definitions(soup)
+        title = definitions.get("商品名") or self._first_text(soup.select_one(".c-productDetail__title"))
+        image = soup.select_one(".c-productDetail__thum img[src], .c-productDetail img[src]")
+        description = self._first_text(soup.select_one(".c-productDetail__text, .c-productDetail__desc"))
+        return ReleaseItem(
+            source=self.source_name,
+            item_id=item_id,
+            title=title or item_id,
+            url=url,
+            character=character,
+            keyword=keyword,
+            image_url=image.get("src") if image else None,
+            price=definitions.get("価格"),
+            release_text=definitions.get("発売日"),
+            description=description or None,
+        )
+
+    @staticmethod
+    def _definitions(soup: BeautifulSoup) -> dict[str, str]:
+        definitions: dict[str, str] = {}
+        for block in soup.select(".c-productDetail__detail-item"):
+            key = block.select_one("dt")
+            value = block.select_one("dd")
+            if key and value:
+                definitions[key.get_text(" ", strip=True)] = value.get_text(" ", strip=True)
+        return definitions
+
+    @staticmethod
+    def _first_text(node) -> str:
+        return node.get_text(" ", strip=True) if node else ""
+
+    def _matching_category_urls(self, html: str, keyword: str) -> list[str]:
+        soup = BeautifulSoup(html, "html.parser")
+        urls: list[str] = []
+        for link in soup.select('a[href*="products_category"]'):
+            text = link.get_text(" ", strip=True)
+            if keyword.casefold() not in text.casefold():
+                continue
+            url = urljoin(self.base_url, link.get("href", ""))
+            if url not in urls:
+                urls.append(url)
+        return urls
+
+
+class ToysCabinScraper(SourceScraper):
+    source_name = "toys_cabin"
+    base_url = "https://toyscabin.com"
+    products_url = "https://toyscabin.com/product/"
+
+    def search_url(self, keyword: str) -> str:
+        return self.products_url
+
+    def fetch(self, character: str, keyword: str) -> list[ReleaseItem]:
+        with httpx.Client(timeout=self.timeout_seconds, headers={"User-Agent": USER_AGENT}) as client:
+            html = client.get(self.products_url, follow_redirects=True).raise_for_status().text
+        return self.parse(html, character=character, keyword=keyword)
+
+    def parse(self, html: str, character: str, keyword: str) -> list[ReleaseItem]:
+        soup = BeautifulSoup(html, "html.parser")
+        items: list[ReleaseItem] = []
+        for link in soup.select('a[href*="/product/"][href$=".php"]'):
+            href = link.get("href", "")
+            url = urljoin(self.base_url, href)
+            item_id = urlparse(url).path.rstrip("/").split("/")[-1].removesuffix(".php")
+            text = " ".join(link.get_text(" ", strip=True).split())
+            if not item_id or not text or keyword.casefold() not in text.casefold():
+                continue
+            title, price, release_text = self._parse_card_text(text)
+            image = link.select_one("img[src]")
+            items.append(
+                ReleaseItem(
+                    source=self.source_name,
+                    item_id=item_id,
+                    title=title,
+                    url=url,
+                    character=character,
+                    keyword=keyword,
+                    image_url=urljoin(self.base_url, image.get("src", "")) if image else None,
+                    price=price,
+                    release_text=release_text,
+                )
+            )
+        return _unique_by_dedupe_key(items)
+
+    @staticmethod
+    def _parse_card_text(text: str) -> tuple[str, str | None, str | None]:
+        normalized = " ".join(text.replace("\u3000", " ").split())
+        price_match = re.search(r"(?P<price>\d[\d,]*円)", normalized)
+        release_match = re.search(r"(?P<release>20\d{2}年\s*\d{1,2}月(?:\d{1,2}日)?)", normalized)
+        price = price_match.group("price") if price_match else None
+        release_text = release_match.group("release").replace(" ", "") if release_match else None
+        title = normalized
+        if price_match:
+            title = normalized[: price_match.start()].strip()
+        return title or normalized, price, release_text
+
+
+class ReMentScraper(SourceScraper):
+    source_name = "rement"
+    base_url = "https://www.re-ment.co.jp/product/"
+    products_url = "https://www.re-ment.co.jp/product/"
+    _brand_page_cache: dict[str, str] = {}
+
+    def search_url(self, keyword: str) -> str:
+        return self.products_url
+
+    def fetch(self, character: str, keyword: str) -> list[ReleaseItem]:
+        with httpx.Client(timeout=self.timeout_seconds, headers={"User-Agent": USER_AGENT}) as client:
+            index_html = client.get(self.products_url, follow_redirects=True).raise_for_status().text
+            brand_urls = self._brand_urls(index_html)
+            items: list[ReleaseItem] = []
+            for brand_url in brand_urls:
+                brand_html = self._brand_page_cache.get(brand_url)
+                if brand_html is None:
+                    brand_html = client.get(brand_url, follow_redirects=True).raise_for_status().text
+                    self._brand_page_cache[brand_url] = brand_html
+                items.extend(self.parse(brand_html, character=character, keyword=keyword))
+            return _unique_by_dedupe_key(items)
+
+    def parse(self, html: str, character: str, keyword: str) -> list[ReleaseItem]:
+        soup = BeautifulSoup(html, "html.parser")
+        items: list[ReleaseItem] = []
+        for node in soup.select(".item"):
+            link = node.select_one('a[href*="/product/r"], a[href^="../product/r"]')
+            name = node.select_one(".name")
+            if link is None or name is None:
+                continue
+            text = node.get_text(" ", strip=True)
+            if keyword.casefold() not in text.casefold():
+                continue
+            url = urljoin(self.base_url, link.get("href", ""))
+            item_id = urlparse(url).path.rstrip("/").split("/")[-1]
+            image = node.select_one("img[src], img[data-original]")
+            image_url = None
+            if image is not None:
+                image_url = image.get("data-original") or image.get("src")
+            items.append(
+                ReleaseItem(
+                    source=self.source_name,
+                    item_id=item_id,
+                    title=name.get_text(" ", strip=True),
+                    url=url,
+                    character=character,
+                    keyword=keyword,
+                    image_url=urljoin(self.base_url, image_url) if image_url else None,
+                    price=self._clean_price(self._first_text(node.select_one(".price"))) or None,
+                    status_text="発売予定" if "発売予定" in text else None,
+                )
+            )
+        return _unique_by_dedupe_key(items)
+
+    def _brand_urls(self, html: str) -> list[str]:
+        soup = BeautifulSoup(html, "html.parser")
+        urls: list[str] = []
+        for link in soup.select('a[href^="brand.php?c="]'):
+            url = urljoin(self.products_url, link.get("href", ""))
+            if url not in urls:
+                urls.append(url)
+        return urls
+
+    @staticmethod
+    def _first_text(node) -> str:
+        return node.get_text(" ", strip=True) if node else ""
+
+    @staticmethod
+    def _clean_price(value: str) -> str:
+        return value.replace("発売予定", "").strip()
+
+
+def _unique_by_dedupe_key(items: list[ReleaseItem]) -> list[ReleaseItem]:
+    seen: set[str] = set()
+    unique: list[ReleaseItem] = []
+    for item in items:
+        if item.dedupe_key in seen:
+            continue
+        seen.add(item.dedupe_key)
+        unique.append(item)
+    return unique
+
+
 SCRAPERS: dict[str, type[SourceScraper]] = {
     "gashapon": GashaponScraper,
     "ichiban_kuji": IchibanKujiScraper,
     "takaratomy_arts": TakaraTomyArtsScraper,
     "qualia": QualiaScraper,
     "ken_elephant": KenElephantScraper,
+    "kitan_club": KitanClubScraper,
+    "toys_cabin": ToysCabinScraper,
+    "rement": ReMentScraper,
 }

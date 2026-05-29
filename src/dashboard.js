@@ -4,6 +4,9 @@ export const sourceLabels = {
   takaratomy_arts: 'Takara Tomy Arts',
   qualia: 'Qualia',
   ken_elephant: 'Ken Elephant',
+  kitan_club: 'Kitan Club',
+  toys_cabin: 'Toys Cabin',
+  rement: 'Re-Ment',
 };
 
 export function getDisplayValue(item, field) {

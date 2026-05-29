@@ -30,6 +30,9 @@ describe('dashboard helpers', () => {
     expect(sourceLabels.takaratomy_arts).toBe('Takara Tomy Arts');
     expect(sourceLabels.qualia).toBe('Qualia');
     expect(sourceLabels.ken_elephant).toBe('Ken Elephant');
+    expect(sourceLabels.kitan_club).toBe('Kitan Club');
+    expect(sourceLabels.toys_cabin).toBe('Toys Cabin');
+    expect(sourceLabels.rement).toBe('Re-Ment');
     expect(getDisplayValue(items[0], 'title')).toBe('짱구 캡슐토이');
     expect(getDisplayValue(items[0], 'release_text')).toBe('2026년 5월');
     expect(getDisplayValue(items[1], 'release_text')).toBe('2026年6月');

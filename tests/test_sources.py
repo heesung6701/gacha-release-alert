@@ -2,8 +2,11 @@ from gacha_alert.sources import (
     GashaponScraper,
     IchibanKujiScraper,
     KenElephantScraper,
+    KitanClubScraper,
     QualiaScraper,
+    ReMentScraper,
     TakaraTomyArtsScraper,
+    ToysCabinScraper,
 )
 
 
@@ -122,3 +125,66 @@ def test_parse_ken_elephant_products_json():
     assert items[0].item_id == "123"
     assert items[0].url == "https://kenelestore.jp/products/gc0714c"
     assert items[0].price == "¥500"
+
+
+def test_parse_kitan_club_product_detail():
+    html = """
+    <section class="c-productDetail">
+      <h2 class="c-productDetail__title">ちいかわ みんな大集合！フィギュア20体セット</h2>
+      <div class="c-productDetail__thum"><img src="https://example.com/kitan.jpg" /></div>
+      <div class="c-productDetail__text">ちいかわのフィギュアセットです。</div>
+      <dl class="c-productDetail__detail-item"><dt>商品名</dt><dd>ちいかわ みんな大集合！フィギュア20体セット</dd></dl>
+      <dl class="c-productDetail__detail-item"><dt>発売日</dt><dd>2026年5月下旬</dd></dl>
+      <dl class="c-productDetail__detail-item"><dt>価格</dt><dd>1回500円 全5種</dd></dl>
+    </section>
+    """
+
+    item = KitanClubScraper().parse_detail(
+        html,
+        url="https://kitan.jp/products/chiikawa_figures/",
+        character="치이카와",
+        keyword="ちいかわ",
+    )
+
+    assert item.source == "kitan_club"
+    assert item.item_id == "chiikawa_figures"
+    assert item.price == "1回500円 全5種"
+    assert item.release_text == "2026年5月下旬"
+
+
+def test_parse_toys_cabin_listing():
+    html = """
+    <a href="/product/20260501_1421.php">
+      <img src="/uploads/fgo.jpg" />
+      Fate/Grand Order 概念礼装カードアクリル＆キーホルダー　300円
+      2026年8月　JAN CODE:4589415443597
+    </a>
+    """
+
+    items = ToysCabinScraper().parse(html, character="FGO", keyword="Fate/Grand Order")
+
+    assert len(items) == 1
+    assert items[0].source == "toys_cabin"
+    assert items[0].item_id == "20260501_1421"
+    assert items[0].price == "300円"
+    assert items[0].release_text == "2026年8月"
+
+
+def test_parse_rement_brand_page():
+    html = """
+    <div class="item">
+      <a href="../product/r70006">
+        <p class="photo"><img data-original="../images/item/r70006.jpg" /></p>
+        <p class="name">シナモロール　きらきらそらいろパーティー</p>
+        <p class="price">1,320円（税抜価格1,200円）</p>
+        <p>発売予定</p>
+      </a>
+    </div>
+    """
+
+    items = ReMentScraper().parse(html, character="산리오", keyword="シナモロール")
+
+    assert len(items) == 1
+    assert items[0].source == "rement"
+    assert items[0].item_id == "r70006"
+    assert items[0].status_text == "発売予定"
