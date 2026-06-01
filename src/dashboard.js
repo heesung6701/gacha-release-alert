@@ -59,3 +59,57 @@ export function formatDate(value) {
 export function formatGeneratedText(data, items) {
   return `마지막 갱신: ${formatDate(data.generated_at)} · 총 ${data.count ?? items.length}개`;
 }
+
+function dateFromParts(year, month, day) {
+  return new Date(Number(year), Number(month) - 1, Number(day));
+}
+
+function lastDayOfMonth(year, month) {
+  return new Date(Number(year), Number(month), 0).getDate();
+}
+
+export function parseReleaseDate(item) {
+  const value = [item?.release_text, item?.release_text_ko].filter(Boolean).join(' ');
+  if (!value) return null;
+
+  const exactMatch = value.match(/(\d{4})\s*[年년]\s*(\d{1,2})\s*[月월]\s*(\d{1,2})\s*[日일]?/);
+  if (exactMatch) return dateFromParts(exactMatch[1], exactMatch[2], exactMatch[3]);
+
+  const monthMatch = value.match(/(\d{4})\s*[年년]\s*(\d{1,2})\s*[月월]\s*(上旬|中旬|下旬|상순|중순|하순)?/);
+  if (!monthMatch) return null;
+
+  const [, year, month, period] = monthMatch;
+  let day = 1;
+  if (period === '上旬' || period === '상순') day = 10;
+  if (period === '中旬' || period === '중순') day = 20;
+  if (period === '下旬' || period === '하순') day = lastDayOfMonth(year, month);
+  return dateFromParts(year, month, day);
+}
+
+export function sortItemsByReleaseDate(items) {
+  return [...items].sort((left, right) => {
+    const leftDate = parseReleaseDate(left);
+    const rightDate = parseReleaseDate(right);
+
+    if (leftDate && rightDate) return rightDate - leftDate;
+    if (leftDate) return -1;
+    if (rightDate) return 1;
+    return 0;
+  });
+}
+
+function startOfLocalDate(date) {
+  return new Date(date.getFullYear(), date.getMonth(), date.getDate());
+}
+
+export function formatReleaseDday(item, today = new Date()) {
+  const releaseDate = parseReleaseDate(item);
+  if (!releaseDate) return '';
+
+  const daysUntilRelease = Math.ceil(
+    (startOfLocalDate(releaseDate) - startOfLocalDate(today)) / 86_400_000,
+  );
+  if (daysUntilRelease < 0) return '';
+  if (daysUntilRelease === 0) return 'D-Day';
+  return `D-${daysUntilRelease}`;
+}

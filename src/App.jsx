@@ -2,8 +2,10 @@ import { useEffect, useMemo, useState } from 'react';
 import {
   filterItems,
   formatGeneratedText,
+  formatReleaseDday,
   getDisplayValue,
   getFilterOptions,
+  sortItemsByReleaseDate,
   sourceLabels,
 } from './dashboard';
 import './styles.css';
@@ -18,6 +20,7 @@ function Card({ item }) {
   const title = getDisplayValue(item, 'title');
   const releaseText = getDisplayValue(item, 'release_text');
   const statusText = getDisplayValue(item, 'status_text');
+  const ddayText = formatReleaseDday(item);
 
   return (
     <article className="card">
@@ -26,6 +29,7 @@ function Card({ item }) {
         <div className="badges">
           <span className="badge">{sourceLabels[item.source] || item.source}</span>
           <span className="badge">{item.character}</span>
+          {ddayText ? <span className="badge dday-badge">{ddayText}</span> : null}
         </div>
         <h2>{title}</h2>
         <p className="meta">
@@ -80,7 +84,10 @@ function App() {
   }, []);
 
   const options = useMemo(() => getFilterOptions(items), [items]);
-  const visibleItems = useMemo(() => filterItems(items, filters), [items, filters]);
+  const visibleItems = useMemo(
+    () => sortItemsByReleaseDate(filterItems(items, filters)),
+    [items, filters],
+  );
   const isEmpty = visibleItems.length === 0;
 
   function updateFilter(name, value) {

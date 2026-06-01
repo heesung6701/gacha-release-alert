@@ -13,7 +13,8 @@ const payload = {
       keyword: 'クレヨンしんちゃん',
       title: 'Crayon Shinchan Capsule',
       title_ko: '짱구 캡슐토이',
-      release_text_ko: '2026년 5월',
+      release_text: '2026年05月01日(金)より順次発売予定',
+      release_text_ko: '2026년 5월 1일',
       status_text_ko: '판매중',
       price: '300円',
       url: 'https://example.com/shinchan',
@@ -24,7 +25,8 @@ const payload = {
       keyword: 'サンリオ',
       title: 'Sanrio Lottery',
       title_ko: '산리오 복권',
-      release_text_ko: '2026년 6월',
+      release_text: '2099年08月08日(土)より順次発売予定',
+      release_text_ko: '2099년 8월 8일',
       status_text_ko: '판매 예정',
       url: 'https://example.com/sanrio',
     },
@@ -49,6 +51,11 @@ describe('App', () => {
     expect(screen.getByLabelText('Bandai Gashapon')).toBeChecked();
     expect(screen.getByLabelText('Ichiban Kuji')).toBeChecked();
     expect(screen.getByRole('heading', { name: '산리오 복권' })).toBeInTheDocument();
+    expect(screen.getAllByRole('heading', { level: 2 }).map((heading) => heading.textContent)).toEqual([
+      '산리오 복권',
+      '짱구 캡슐토이',
+    ]);
+    expect(screen.getByText(/^D-/)).toBeInTheDocument();
 
     fireEvent.click(screen.getByLabelText('Ichiban Kuji'));
 

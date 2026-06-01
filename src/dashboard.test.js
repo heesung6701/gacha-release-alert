@@ -1,5 +1,13 @@
 import { describe, expect, it } from 'vitest';
-import { filterItems, formatGeneratedText, getDisplayValue, getFilterOptions, sourceLabels } from './dashboard';
+import {
+  filterItems,
+  formatGeneratedText,
+  formatReleaseDday,
+  getDisplayValue,
+  getFilterOptions,
+  sortItemsByReleaseDate,
+  sourceLabels,
+} from './dashboard';
 
 const items = [
   {
@@ -55,5 +63,33 @@ describe('dashboard helpers', () => {
   it('formats generated metadata in Korean with stable count fallback', () => {
     expect(formatGeneratedText({ generated_at: '2026-05-26T12:30:00+09:00', count: 2 }, items)).toContain('총 2개');
     expect(formatGeneratedText({}, items)).toBe('마지막 갱신: 갱신 시간 알 수 없음 · 총 2개');
+  });
+
+  it('sorts releases by known release date from newest to oldest and places unknown dates last', () => {
+    const unsorted = [
+      { title: 'unknown', release_text: null },
+      { title: 'older month', release_text: '2025年6月下旬' },
+      { title: 'newer exact', release_text: '2026年08月08日(土)より順次発売予定' },
+      { title: 'same exact', release_text_ko: '2026년 8월 8일' },
+      { title: 'middle', release_text: '2026年1月下旬' },
+    ];
+
+    expect(sortItemsByReleaseDate(unsorted).map((item) => item.title)).toEqual([
+      'newer exact',
+      'same exact',
+      'middle',
+      'older month',
+      'unknown',
+    ]);
+    expect(sortItemsByReleaseDate(unsorted)[0]).toBe(unsorted[2]);
+  });
+
+  it('shows D-day text only for unreleased items', () => {
+    const today = new Date('2026-08-01T12:00:00+09:00');
+
+    expect(formatReleaseDday({ release_text: '2026年08月08日(土)より順次発売予定' }, today)).toBe('D-7');
+    expect(formatReleaseDday({ release_text: '2026年08月01日(土)より順次発売予定' }, today)).toBe('D-Day');
+    expect(formatReleaseDday({ release_text: '2026年07月31日(金)より順次発売予定' }, today)).toBe('');
+    expect(formatReleaseDday({ release_text: null }, today)).toBe('');
   });
 });
