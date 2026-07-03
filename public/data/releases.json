@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-07-02T18:39:40.328638+00:00",
+  "generated_at": "2026-07-03T00:55:46.525177+00:00",
   "count": 556,
   "items": [
     {
@@ -8266,6 +8266,23 @@
     },
     {
       "source": "takaratomy_arts",
+      "item_id": "Y905940",
+      "title": "サンリオ キャラクターズ くるくるヘアカーラーフィギュア",
+      "url": "https://www.takaratomy-arts.co.jp/items/item.html?n=Y905940",
+      "character": "산리오",
+      "keyword": "サンリオ",
+      "image_url": null,
+      "price": null,
+      "release_text": null,
+      "status_text": null,
+      "description": null,
+      "lineup_names": [],
+      "title_ko": "산리오 キャラクターズ くるくるヘアカーラーフィギュア",
+      "release_text_ko": null,
+      "status_text_ko": null
+    },
+    {
+      "source": "takaratomy_arts",
       "item_id": "Y903649",
       "title": "サンリオ キャラクターズ もこもこパンダフロッキーマスコット",
       "url": "https://www.takaratomy-arts.co.jp/items/item.html?n=Y903649",
@@ -8312,23 +8329,6 @@
       "description": null,
       "lineup_names": [],
       "title_ko": "산리오 キャラクターズ おみみでぶらりん마스코트 みみハート컬렉션",
-      "release_text_ko": null,
-      "status_text_ko": null
-    },
-    {
-      "source": "takaratomy_arts",
-      "item_id": "Y905940",
-      "title": "サンリオ キャラクターズ くるくるヘアカーラーフィギュア",
-      "url": "https://www.takaratomy-arts.co.jp/items/item.html?n=Y905940",
-      "character": "산리오",
-      "keyword": "サンリオ",
-      "image_url": null,
-      "price": null,
-      "release_text": null,
-      "status_text": null,
-      "description": null,
-      "lineup_names": [],
-      "title_ko": "산리오 キャラクターズ くるくるヘアカーラーフィギュア",
       "release_text_ko": null,
       "status_text_ko": null
     },
@@ -9138,7 +9138,7 @@
       "url": "https://qualia-45.jp/distinations/studio-haneul_sanrio_fmc/",
       "character": "산리오",
       "keyword": "ハローキティ",
-      "image_url": "https://qualia-45.jp/wp-content/uploads/qualialogos.png?1783017479",
+      "image_url": "https://qualia-45.jp/wp-content/uploads/qualialogos.png?1783040079",
       "price": "400円　全6種",
       "release_text": "2026年3月",
       "status_text": null,
