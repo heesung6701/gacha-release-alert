@@ -1,6 +1,6 @@
 {
-  "generated_at": "2026-07-14T06:57:54.190655+00:00",
-  "count": 553,
+  "generated_at": "2026-07-14T12:37:14.406597+00:00",
+  "count": 551,
   "items": [
     {
       "source": "gashapon",
@@ -3421,23 +3421,6 @@
     },
     {
       "source": "rement",
-      "item_id": "r20785",
-      "title": "クレヨンしんちゃん　パジャマでおやすみしんちゃん",
-      "url": "https://www.re-ment.co.jp/product/r20785",
-      "character": "짱구",
-      "keyword": "クレヨンしんちゃん",
-      "image_url": "https://www.re-ment.co.jp/data/photo/product/t2/1143122502.jpg",
-      "price": "990円（税抜価格900円）",
-      "release_text": null,
-      "status_text": null,
-      "description": null,
-      "lineup_names": [],
-      "title_ko": "짱구는 못말려 パジャマでおやすみしんちゃん",
-      "release_text_ko": null,
-      "status_text_ko": null
-    },
-    {
-      "source": "rement",
       "item_id": "r20735",
       "title": "クレヨンしんちゃんテラリウム　まいにちがたのしいゾ！",
       "url": "https://www.re-ment.co.jp/product/r20735",
@@ -3450,23 +3433,6 @@
       "description": null,
       "lineup_names": [],
       "title_ko": "짱구는 못말려テラリウム まいにちがたのしいゾ!",
-      "release_text_ko": null,
-      "status_text_ko": null
-    },
-    {
-      "source": "rement",
-      "item_id": "r20835",
-      "title": "しんちゃんルームにあそびにくれば〜？",
-      "url": "https://www.re-ment.co.jp/product/r20835",
-      "character": "짱구",
-      "keyword": "しんちゃん",
-      "image_url": "https://www.re-ment.co.jp/data/photo/product/t2/1048120263.jpg",
-      "price": "990円（税抜価格900円）",
-      "release_text": null,
-      "status_text": null,
-      "description": null,
-      "lineup_names": [],
-      "title_ko": "しんちゃんルームにあそびにくれば〜？",
       "release_text_ko": null,
       "status_text_ko": null
     },
