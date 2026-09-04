@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-09-03T03:59:44.876888+00:00",
+  "generated_at": "2026-09-04T04:05:59.841366+00:00",
   "count": 585,
   "items": [
     {
@@ -140,23 +140,6 @@
     },
     {
       "source": "gashapon",
-      "item_id": "4582770070989000",
-      "title": "【フラットガシャポン】クレヨンしんちゃん マウスシートコレクション『映画クレヨンしんちゃん ヘンダーランドの大冒険』",
-      "url": "https://gashapon.jp/products/detail.php?jan_code=4582770070989000",
-      "character": "짱구",
-      "keyword": "クレヨンしんちゃん",
-      "image_url": "https://bandai-a.akamaihd.net/bc/img/model/b/1000253618_1.jpg",
-      "price": "500円",
-      "release_text": null,
-      "status_text": null,
-      "description": null,
-      "lineup_names": [],
-      "title_ko": "【フラットガシャポン】짱구는 못말려 マウスシート컬렉션『영화짱구는 못말려 헨더랜드의 대모험』",
-      "release_text_ko": null,
-      "status_text_ko": null
-    },
-    {
-      "source": "gashapon",
       "item_id": "4582769979132000",
       "title": "クレヨンしんちゃん だがしんちゃんミニチュアチャーム",
       "url": "https://gashapon.jp/products/detail.php?jan_code=4582769979132000",
@@ -169,6 +152,23 @@
       "description": null,
       "lineup_names": [],
       "title_ko": "짱구는 못말려 だがしんちゃん미니어처참",
+      "release_text_ko": null,
+      "status_text_ko": null
+    },
+    {
+      "source": "gashapon",
+      "item_id": "4582770070989000",
+      "title": "【フラットガシャポン】クレヨンしんちゃん マウスシートコレクション『映画クレヨンしんちゃん ヘンダーランドの大冒険』",
+      "url": "https://gashapon.jp/products/detail.php?jan_code=4582770070989000",
+      "character": "짱구",
+      "keyword": "クレヨンしんちゃん",
+      "image_url": "https://bandai-a.akamaihd.net/bc/img/model/b/1000253618_1.jpg",
+      "price": "500円",
+      "release_text": null,
+      "status_text": null,
+      "description": null,
+      "lineup_names": [],
+      "title_ko": "【フラットガシャポン】짱구는 못말려 マウスシート컬렉션『영화짱구는 못말려 헨더랜드의 대모험』",
       "release_text_ko": null,
       "status_text_ko": null
     },
@@ -3863,23 +3863,6 @@
     },
     {
       "source": "gashapon",
-      "item_id": "4582769978937000",
-      "title": "サンリオキャラクターズ ぱんだっこフィギュア",
-      "url": "https://gashapon.jp/products/detail.php?jan_code=4582769978937000",
-      "character": "산리오",
-      "keyword": "サンリオ",
-      "image_url": "https://bandai-a.akamaihd.net/bc/img/model/b/1000253576_1.jpg",
-      "price": "300円",
-      "release_text": null,
-      "status_text": null,
-      "description": null,
-      "lineup_names": [],
-      "title_ko": "산리오キャラクターズ ぱんだっこフィギュア",
-      "release_text_ko": null,
-      "status_text_ko": null
-    },
-    {
-      "source": "gashapon",
       "item_id": "4570118205582000",
       "title": "サンリオキャラクターズ ミニ貯金箱 夢みるエンジェルver.",
       "url": "https://gashapon.jp/products/detail.php?jan_code=4570118205582000",
@@ -3892,6 +3875,23 @@
       "description": null,
       "lineup_names": [],
       "title_ko": "산리오キャラクターズ ミニ貯金箱 夢みるエンジェルver.",
+      "release_text_ko": null,
+      "status_text_ko": null
+    },
+    {
+      "source": "gashapon",
+      "item_id": "4582769978937000",
+      "title": "サンリオキャラクターズ ぱんだっこフィギュア",
+      "url": "https://gashapon.jp/products/detail.php?jan_code=4582769978937000",
+      "character": "산리오",
+      "keyword": "サンリオ",
+      "image_url": "https://bandai-a.akamaihd.net/bc/img/model/b/1000253576_1.jpg",
+      "price": "300円",
+      "release_text": null,
+      "status_text": null,
+      "description": null,
+      "lineup_names": [],
+      "title_ko": "산리오キャラクターズ ぱんだっこフィギュア",
       "release_text_ko": null,
       "status_text_ko": null
     },
